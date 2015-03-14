@@ -5,6 +5,7 @@ class BestchangeRates
 
   INFO_FILE = 'http://www.bestchange.ru/bm/info.zip'
 
+  # Load zip file, unzip and save files content in memory
   def load_contents
     @contents = []
     temp_file = open(INFO_FILE)
@@ -18,19 +19,19 @@ class BestchangeRates
         }
         File.unlink filename
       end
-      temp_file.close
-      temp_file.unlink
-      @contents
     end
+    temp_file.close
+    temp_file.unlink
+    @contents
   end
 
-  def parse_contents
-    @data = {}
+  def parse_csv_contents
+    @csv_data = {}
     %w{rates cy exch bcodes brates}.each do |key|
       csv = contents.detect{|entry| entry[:name] == "bm_#{key}.dat"}[:content]
-      @data[key.to_sym] = CSV.parse csv, col_sep: ';'
+      @csv_data[key.to_sym] = CSV.parse csv, col_sep: ';'
     end
-    @data
+    @csv_data
   end
 
   def contents
@@ -39,21 +40,21 @@ class BestchangeRates
 
   def info
     csv_info = contents.detect{|x| x[:name] == 'bm_info.dat'}[:content]
-    array = CSV.parse csv_info, col_sep: '='
-    Hash[array]
+    array_info = CSV.parse csv_info, col_sep: '='
+    Hash[array_info]
   end
 
   def csv_data
-    @data || parse_contents
+    @csv_data || parse_csv_contents
   end
 
   def rates(direction)
-    from = currency_code_by_name direction.keys.first
-    to = currency_code_by_name direction.values.first
-    rates_by_currency_codes(from, to)
+    from = currency_id_by_name direction.keys.first
+    to = currency_id_by_name direction.values.first
+    rates_by_currency_ids(from, to)
   end
 
-  def rates_by_currency_codes(from, to)
+  def rates_by_currency_ids(from, to)
     rates_list = csv_data[:rates].select{|entry| entry[0].to_i == from && entry[1].to_i == to }.map do |entry|
       {
           from: currencies[entry[0].to_i],
@@ -77,11 +78,8 @@ class BestchangeRates
 
   private
 
-  def currency_code_by_name(name)
+  def currency_id_by_name(name)
     csv_data[:cy].detect{|entry| entry[2] == name || entry[3] == name }[0].to_i
   end
 
-  def parse_csv(content)
-    CSV.parse(content, col_sep: ';')
-  end
 end
