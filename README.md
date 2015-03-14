@@ -23,4 +23,7 @@ gem 'bestchange_rates'
    # get rates for direction
    bestchange_rates.rates 'WMZ' => 'Сбербанк'
 
+   # bestchange api info
+   bestchange_rates.info
+
 ```

@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'bestchange_rates'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2015-03-14'
   s.summary     = "Rates from Bestchange"
   s.description = "Bestchange API"

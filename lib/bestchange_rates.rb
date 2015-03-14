@@ -8,10 +8,9 @@ class BestchangeRates
   def load_contents
     @contents = []
     temp_file = open(INFO_FILE)
-    random_string = ::SecureRandom.hex(6)
     ::Zip::File.open(temp_file.path) do |zip_file|
       zip_file.glob('*.dat').each do |entry|
-        filename = "/tmp/#{random_string}-#{entry.name}"
+        filename = Dir::Tmpname.make_tmpname "/tmp/#{entry.name}", nil
         entry.extract(filename)
         @contents << {
             name: entry.name,
@@ -26,13 +25,22 @@ class BestchangeRates
   end
 
   def parse_contents
-    contents = @contents || load_contents
     @data = {}
     %w{rates cy exch bcodes brates}.each do |key|
       csv = contents.detect{|entry| entry[:name] == "bm_#{key}.dat"}[:content]
       @data[key.to_sym] = CSV.parse csv, col_sep: ';'
     end
     @data
+  end
+
+  def contents
+    @contents || load_contents
+  end
+
+  def info
+    csv_info = contents.detect{|x| x[:name] == 'bm_info.dat'}[:content]
+    array = CSV.parse csv_info, col_sep: '='
+    Hash[array]
   end
 
   def csv_data
