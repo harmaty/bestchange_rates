@@ -64,7 +64,7 @@ class BestchangeRates
       }
     end.sort_by{|entry| entry[:give]/entry[:get]}
 
-    rates_list.map.with_index{|rate, i| rate[:position] = i + 1 }
+    rates_list.map.with_index{|rate, i| rate[:position] = i + 1; rate }
   end
 
   def exchangers
