@@ -54,9 +54,8 @@ class BestchangeRates
   end
 
   def rates_by_currency_codes(from, to)
-    csv_data[:rates].select{|entry| entry[0].to_i == from && entry[1].to_i == to }.map.with_index do |entry, i|
+    rates_list = csv_data[:rates].select{|entry| entry[0].to_i == from && entry[1].to_i == to }.map do |entry|
       {
-          position: i + 1,
           from: currencies[entry[0].to_i],
           to: currencies[entry[1].to_i],
           exchanger: exchangers[entry[2].to_i],
@@ -64,6 +63,8 @@ class BestchangeRates
           get: entry[4].to_f
       }
     end.sort_by{|entry| entry[:give]/entry[:get]}
+
+    rates_list.map.with_index{|rate, i| rate[:position] = i + 1 }
   end
 
   def exchangers
