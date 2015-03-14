@@ -1,10 +1,10 @@
-Bestchange Rates allows to get actual rates from bestchange.ru
+bestchange_rates gem allows to get actual rates from bestchange.ru
 
 ## Installation
 
 ```ruby
 
-gem 'bestchange_rates'
+gem 'bestchange_rates', :git => "git://github.com/harmaty/bestchange_rates.git"
 
 ```
 
@@ -33,5 +33,7 @@ gem 'bestchange_rates'
 
    # bestchange api info
    bestchange_rates.info
+
+   # => {"last_update"=>"23:10:02, 14 марта", "current_version"=>"2.01", "compatible_version"=>"2.01"}
 
 ```
